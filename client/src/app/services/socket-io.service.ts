@@ -6,20 +6,18 @@ import * as io from 'socket.io-client';
   providedIn: 'root',
 })
 export class SocketIoService {
-  constructor() {}
-
   private readonly uri: string = 'http://localhost:3000/';
   socket: any = io.io(this.uri);
 
-  listen(eventName: string) {
+  listen(eventName: string): Observable<any> {
     return new Observable((subscriber) => {
-      this.socket.on(eventName, (data) => {
+      this.socket.on(eventName, (data: any) => {
         subscriber.next(data);
       });
     });
   }
 
-  emit(eventName: string, data: any) {
+  emit(eventName: string, data: any): void {
     this.socket.emit(eventName, data);
   }
 }

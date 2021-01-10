@@ -10,7 +10,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged & npm run lint --prefix ./client "
+      "pre-commit": "lint-staged && npm run lint --prefix ./client && npm run lint --prefix ./server"
     }
   },
   "lint-staged": {
