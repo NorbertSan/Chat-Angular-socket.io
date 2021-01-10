@@ -4,8 +4,8 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
-    "start":"nodemon -e ts --exec  \"npm run compile\"",
-    "compile":"tsc && node dist/app.js",
+    "start": "nodemon -e ts --exec  \"npm run compile\"",
+    "compile": "tsc && node dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

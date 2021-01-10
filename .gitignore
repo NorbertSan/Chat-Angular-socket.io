@@ -6,6 +6,7 @@ client/tmp
 client/out-tsc
 client/bazel-out
 client/node_modules
+client/tailwind-styles.css
 
 # Server 
 server/dist
