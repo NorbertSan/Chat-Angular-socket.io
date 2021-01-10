@@ -1,3 +1,5 @@
+node_modules
+
 # Client
 client/dist
 client/tmp
