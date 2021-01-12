@@ -1,11 +1,15 @@
-import express = require('express');
-import http = require('http');
-import socketIo = require('socket.io');
-import cors = require('cors');
+import express from 'express';
+import http from 'http';
+import socketIo from 'socket.io';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import bodyParser from 'body-parser';
+import userRouter from './routes/userRouter';
 
-import userRouter = require('./routes/userRouter');
+dotenv.config();
 
 const app = express();
+app.use(bodyParser.json());
 const server = new http.Server(app);
 const io = new socketIo.Server(server);
 
