@@ -1,4 +1,4 @@
-import admin from 'firebase-admin';
+import firebaseAdmin from 'firebase-admin';
 import firebase from 'firebase';
 
 const firebaseConfig = {
@@ -13,11 +13,12 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-admin.initializeApp({
-  credential: admin.credential.cert(require('/Users/norbertsanpruch/Desktop/admin-key.json')),
-  databaseURL: 'https://chat-sockets-e3828-default-rtdb.firebaseio.com',
+firebaseAdmin.initializeApp({
+  credential: firebaseAdmin.credential.cert(
+    require('/Users/norbertsanpruch/Desktop/admin-key.json'),
+  ),
+  databaseURL: 'https://new-socket-chat-app-default-rtdb.firebaseio.com',
 });
 
-const db = admin.firestore();
-
-export default db;
+export const db = firebaseAdmin.firestore();
+export const admin = firebaseAdmin;

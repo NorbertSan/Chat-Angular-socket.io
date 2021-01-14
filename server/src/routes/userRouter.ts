@@ -1,32 +1,39 @@
+import { checkMandatoryFields } from './../utilities/validators';
 import express from 'express';
 import firebase from 'firebase';
-import db from '../firebase/config';
+import { db } from '../firebase/config';
 
 const router = express.Router();
 
 const USER_ROUTES_ERROR_CODES = {
   EMAIL_ALREADY_IN_USE: 'EMAIL_ALREADY_IN_USE',
+  WRONG_CREDENTIALS: 'WRONG_CREDENTIALS',
 };
 
-interface IUserCreate {
-  id: string;
-  email: string;
-  displayName: string;
-}
-
-interface ICreateUserBody {
+interface IApiReqUserCreate {
   email: string;
   password: string;
   displayName: string;
 }
+interface ICreateUserBody {
+  email: string;
+  id: string;
+  displayName: string;
+}
+interface IApiReqUserLogin {
+  email: string;
+  password: string;
+}
 
 // SIGN UP
 router.route('/create').post(async (req, res) => {
-  const body: ICreateUserBody = req.body;
+  const body: IApiReqUserCreate = req.body;
 
-  if (!body.email || !body.password || !body.displayName) {
-    return res.status(400).json({ message: 'email,password,displayName fields are required' });
+  const errorMsg: string | null = checkMandatoryFields(['email', 'password', 'displayName'], body);
+  if (errorMsg) {
+    return res.status(400).json({ message: errorMsg });
   }
+
   try {
     await firebase.auth().createUserWithEmailAndPassword(body.email, body.password);
 
@@ -34,10 +41,12 @@ router.route('/create').post(async (req, res) => {
       displayName: body.displayName,
     });
 
-    const userId: string = firebase.auth().currentUser.uid;
-    const token: string = await firebase.auth().currentUser.getIdToken();
+    const currentUser = firebase.auth().currentUser;
+    const userId: string = currentUser.uid;
+    const idToken: string = await currentUser.getIdToken();
+    const refreshToken: string = currentUser.refreshToken;
 
-    const userData: IUserCreate = {
+    const userData: ICreateUserBody = {
       id: userId,
       email: body.email,
       displayName: body.displayName,
@@ -45,7 +54,7 @@ router.route('/create').post(async (req, res) => {
 
     await db.collection('users').doc(userId).set(userData);
 
-    return res.status(201).json(token);
+    return res.status(201).json({ idToken, refreshToken });
   } catch (err) {
     if (err.code === 'auth/email-already-in-use') {
       return res
@@ -53,6 +62,28 @@ router.route('/create').post(async (req, res) => {
         .json({ code: USER_ROUTES_ERROR_CODES.EMAIL_ALREADY_IN_USE, message: err.message });
     }
     return res.json(err.message);
+  }
+});
+
+router.route('/login').post(async (req, res) => {
+  const body: IApiReqUserLogin = req.body;
+
+  const errorMsg: string | null = checkMandatoryFields(['email', 'password'], body);
+  if (errorMsg) {
+    return res.status(400).json({ message: errorMsg });
+  }
+
+  try {
+    const currentUser = await firebase.auth().signInWithEmailAndPassword(body.email, body.password);
+    const idToken: string = await currentUser.user.getIdToken();
+    const refreshToken: string = currentUser.user.refreshToken;
+
+    return res.status(200).json({ idToken, refreshToken });
+  } catch (err) {
+    if (err.code === 'auth/wrong-password' || 'auth/user-not-found') {
+      return res.status(401).json({ message: USER_ROUTES_ERROR_CODES.WRONG_CREDENTIALS });
+    }
+    return res.status(500).json(err);
   }
 });
 

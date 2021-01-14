@@ -1,12 +1,11 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import http from 'http';
 import socketIo from 'socket.io';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import userRouter from './routes/userRouter';
-
-dotenv.config();
 
 const app = express();
 app.use(bodyParser.json());
@@ -18,7 +17,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 
 // ROUTES
-app.use('/user', userRouter.default);
+app.use('/user', userRouter);
 
 io.on('connection', (socket) => {
   socket.emit('connection', 'success connection !');
