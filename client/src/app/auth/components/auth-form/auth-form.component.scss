@@ -1,0 +1,18 @@
+:host{
+  ::ng-deep{
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active  {
+        -webkit-box-shadow: 0 0 0 30px #222222 inset !important;
+        -webkit-text-fill-color: #ececec !important;
+    }
+    .cdk-text-field-autofilled{
+      background:transparent;
+    }
+    .mat-form-field-outline{
+      background:#222222;
+      border-radius: 5px;
+    }
+  }
+}

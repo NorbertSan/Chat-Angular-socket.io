@@ -12,6 +12,10 @@ module.exports = {
     extend: {
       colors: {
         bgColor: "#ececec",
+        black: {
+          light: "#292929",
+          dark: "#222222",
+        },
         gray: colors.coolGray,
         blue: colors.lightBlue,
         red: colors.rose,

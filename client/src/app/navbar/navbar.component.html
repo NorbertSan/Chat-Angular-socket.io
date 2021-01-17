@@ -1,12 +1,23 @@
-<header class="bg-bgColor w-full h-16 flex flex-row items-center">
+<header
+  [style]="{
+    height: '8vh'
+  }"
+  class="w-full flex flex-row items-center"
+>
   <nav
-    class="h-full w-10/12 pr-8 flex flex-row justify-between items-center ml-auto"
+    class="h-full w-10/12 pr-10 flex flex-row justify-between items-center ml-auto"
   >
-    <button mat-raised-button>FIND CHANNEL</button>
+    <button mat-raised-button color="primary" class="bg-black-dark">
+      FIND CHANNEL
+    </button>
 
     <div>
-      <button mat-raised-button>SIGN IN</button>
-      <button mat-raised-button class="ml-8">SIGN UP</button>
+      <button mat-raised-button color="primary" class="bg-black-dark">
+        SIGN IN
+      </button>
+      <button mat-raised-button color="primary" class="ml-8 bg-black-dark">
+        SIGN UP
+      </button>
     </div>
   </nav>
 </header>
