@@ -7,9 +7,11 @@ module.exports = {
     "./projects/**/*.html",
     "./projects/**/*.ts",
   ],
+  important: true,
   theme: {
     extend: {
       colors: {
+        bgColor: "#ececec",
         gray: colors.coolGray,
         blue: colors.lightBlue,
         red: colors.rose,
