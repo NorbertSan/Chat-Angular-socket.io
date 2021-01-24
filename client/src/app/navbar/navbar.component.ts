@@ -1,7 +1,6 @@
-import { UserStateActions } from './../store/userState/userState.actions';
 import { AuthService } from './../auth/services/auth.service';
-import { Observable } from 'rxjs';
-import { Component, OnInit } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { UserStateSelectors } from '../store/userState/userState.selectors';
 import { Router } from '@angular/router';
@@ -10,9 +9,9 @@ import { Router } from '@angular/router';
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
   auth$: Observable<boolean>;
-
+  private subs = new Subscription();
   constructor(
     private store: Store,
     private router: Router,
@@ -23,9 +22,13 @@ export class NavbarComponent implements OnInit {
     this.auth$ = this.store.select(UserStateSelectors.auth);
   }
 
-  logout(): Promise<boolean> {
-    this.authService.clearTokens();
-    this.store.dispatch(UserStateActions.logout());
-    return this.router.navigate(['/auth/login']);
+  ngOnDestroy(): void {
+    this.subs.unsubscribe();
+  }
+
+  logout(): void {
+    const sub = this.authService.logout$().subscribe();
+    this.subs.add(sub);
+    this.router.navigate(['/auth/login']);
   }
 }

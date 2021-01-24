@@ -46,8 +46,25 @@ export class AuthService {
     );
   }
 
+  logout$(): Observable<Response> {
+    return this.http.post(`${this.baseUrl}/logout`, null).pipe(
+      tap(() => {
+        this.clearTokens();
+        this.store.dispatch(UserStateActions.logout());
+      })
+    );
+  }
+
   isAuthenticated(): Observable<boolean> {
     return this.store.select(UserStateSelectors.auth);
+  }
+
+  getAuthorizationToken(): string {
+    return this.localStorageService.getItem(LOCAL_STORAGE_ITEMS.ID_TOKEN);
+  }
+
+  getAuthorizationRefreshToken(): string {
+    return this.localStorageService.getItem(LOCAL_STORAGE_ITEMS.REFRESH_TOKEN);
   }
 
   setAuth(auth: boolean): void {
