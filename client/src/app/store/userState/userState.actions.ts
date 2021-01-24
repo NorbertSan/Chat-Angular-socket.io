@@ -4,9 +4,9 @@ const setAuth = createAction(
   '[UserState Component] SetAuth',
   props<{ auth: boolean }>()
 );
-const reset = createAction('[UserState Component] Reset');
+const logout = createAction('[UserState Component] Logout');
 
 export const UserStateActions = {
   setAuth,
-  reset,
+  logout,
 };

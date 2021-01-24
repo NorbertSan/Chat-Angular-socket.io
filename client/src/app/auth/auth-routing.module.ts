@@ -10,6 +10,13 @@ const routes: Routes = [
       login: false,
     },
   },
+  {
+    path: 'login',
+    // component: AuthFormComponent,
+    // data: {
+    //   login: true,
+    // },
+  },
 ];
 
 @NgModule({

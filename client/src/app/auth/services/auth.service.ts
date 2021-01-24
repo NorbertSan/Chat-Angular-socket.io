@@ -41,6 +41,11 @@ export class AuthService {
     this.store.dispatch(UserStateActions.setAuth({ auth }));
   }
 
+  clearTokens(): void {
+    this.localStorageService.removeItem(LOCAL_STORAGE_ITEMS.ID_TOKEN);
+    this.localStorageService.removeItem(LOCAL_STORAGE_ITEMS.REFRESH_TOKEN);
+  }
+
   private setTokensToLocalStorage(tokens: IApiSuccessLogin): void {
     this.localStorageService.setItem(
       LOCAL_STORAGE_ITEMS.ID_TOKEN,

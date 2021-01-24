@@ -12,12 +12,34 @@
     </button>
 
     <div>
-      <button mat-raised-button color="primary" class="bg-black-dark">
-        SIGN IN
-      </button>
-      <button mat-raised-button color="primary" class="ml-8 bg-black-dark">
-        SIGN UP
-      </button>
+      <ng-container *ngIf="auth$ | async; else noAuth">
+        <button
+          (click)="logout()"
+          mat-raised-button
+          color="primary"
+          class="bg-black-dark"
+        >
+          LOGOUT
+        </button>
+      </ng-container>
+      <ng-template #noAuth>
+        <button
+          routerLink="/auth/login"
+          mat-raised-button
+          color="primary"
+          class="bg-black-dark"
+        >
+          SIGN IN
+        </button>
+        <button
+          routerLink="/auth"
+          mat-raised-button
+          color="primary"
+          class="ml-8 bg-black-dark"
+        >
+          SIGN UP
+        </button>
+      </ng-template>
     </div>
   </nav>
 </header>
