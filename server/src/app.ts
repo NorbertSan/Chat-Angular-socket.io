@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 
 // ROUTES
-app.use('/user', userRouter);
+app.use('/api/user', userRouter);
 
 io.on('connection', (socket) => {
   socket.emit('connection', 'success connection !');

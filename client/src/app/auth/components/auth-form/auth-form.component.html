@@ -35,7 +35,15 @@
           <input formControlName="displayName" required matInput />
         </mat-form-field>
 
-        <button mat-raised-button color="primary" class="bg-black-dark w-1/2">
+        <mat-error>{{ error$ | async }}</mat-error>
+
+        <button
+          type="submit"
+          [disabled]="isSaving$ | async"
+          mat-raised-button
+          color="primary"
+          class="bg-black-dark w-1/2 m-"
+        >
           {{ buttonLabel }}
         </button>
       </form>
