@@ -1,3 +1,4 @@
+import { authMiddleware } from './../middlewares/auth.middleware';
 import { checkMandatoryFields } from './../utilities/validators';
 import express from 'express';
 import firebase from 'firebase';
@@ -5,9 +6,12 @@ import { db } from '../firebase/config';
 
 const router = express.Router();
 
-const USER_ROUTES_ERROR_CODES = {
+export const USER_ROUTES_ERROR_CODES = {
   EMAIL_ALREADY_IN_USE: 'EMAIL_ALREADY_IN_USE',
   WRONG_CREDENTIALS: 'WRONG_CREDENTIALS',
+  LOGOUT_SUCCESS: 'LOGOUT_SUCCESS',
+  TOKEN_EXPIRED: 'TOKEN_EXPIRED',
+  INVALID_TOKEN: 'INVALID_TOKEN',
 };
 
 interface IApiReqUserCreate {
@@ -28,7 +32,6 @@ interface IApiReqUserLogin {
 // SIGN UP
 router.route('/create').post(async (req, res) => {
   const body: IApiReqUserCreate = req.body;
-
   const errorMsg: string | null = checkMandatoryFields(['email', 'password', 'displayName'], body);
   if (errorMsg) {
     return res.status(400).json({ message: errorMsg });
@@ -81,10 +84,14 @@ router.route('/login').post(async (req, res) => {
     return res.status(200).json({ idToken, refreshToken });
   } catch (err) {
     if (err.code === 'auth/wrong-password' || 'auth/user-not-found') {
-      return res.status(401).json({ message: USER_ROUTES_ERROR_CODES.WRONG_CREDENTIALS });
+      return res.status(401).json({ code: USER_ROUTES_ERROR_CODES.WRONG_CREDENTIALS });
     }
     return res.status(500).json(err);
   }
+});
+
+router.route('/logout').post(authMiddleware, async (req, res) => {
+  return res.status(200).json({ code: USER_ROUTES_ERROR_CODES.LOGOUT_SUCCESS });
 });
 
 export default router;

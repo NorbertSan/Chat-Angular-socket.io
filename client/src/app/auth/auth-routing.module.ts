@@ -12,10 +12,10 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    // component: AuthFormComponent,
-    // data: {
-    //   login: true,
-    // },
+    component: AuthFormComponent,
+    data: {
+      login: true,
+    },
   },
 ];
 

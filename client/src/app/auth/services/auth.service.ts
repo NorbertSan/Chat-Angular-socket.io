@@ -5,7 +5,11 @@ import {
 } from './../../shared/services/local-storage.service';
 import { UserStateSelectors } from './../../store/userState/userState.selectors';
 import { RestService } from './../../shared/services/rest.service';
-import { IApiSuccessLogin, ICreateUser } from './../auth-models';
+import {
+  IApiSuccessLogin,
+  ICreateUser,
+  IUserCredentials,
+} from './../auth-models';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -26,6 +30,15 @@ export class AuthService {
 
   createUser$(userData: ICreateUser): Observable<IApiSuccessLogin> {
     return this.http.post(`${this.baseUrl}/create`, userData).pipe(
+      tap((res: IApiSuccessLogin) => {
+        this.setTokensToLocalStorage(res);
+        this.setAuth(true);
+      })
+    );
+  }
+
+  login$(userCredentials: IUserCredentials): Observable<IApiSuccessLogin> {
+    return this.http.post(`${this.baseUrl}/login`, userCredentials).pipe(
       tap((res: IApiSuccessLogin) => {
         this.setTokensToLocalStorage(res);
         this.setAuth(true);

@@ -30,19 +30,19 @@
           <mat-hint class="text-gray-400">At least 6 characters</mat-hint>
         </mat-form-field>
 
-        <mat-form-field [appearance]="'outline'">
+        <mat-form-field *ngIf="!login" [appearance]="'outline'">
           <mat-label class="text-gray-400">Nickname</mat-label>
           <input formControlName="displayName" required matInput />
         </mat-form-field>
 
-        <mat-error class="m-b-8">{{ error$ | async }}</mat-error>
+        <mat-error class="mb-2 mt-2">{{ error$ | async }}</mat-error>
 
         <button
           type="submit"
           [disabled]="isSaving$ | async"
           mat-raised-button
           color="primary"
-          class="bg-black-dark w-1/2 m-"
+          class="bg-black-dark w-1/2"
         >
           {{ buttonLabel }}
         </button>
