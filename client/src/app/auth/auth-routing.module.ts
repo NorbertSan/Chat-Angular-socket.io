@@ -5,10 +5,6 @@ import { Routes, RouterModule } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'sign-up',
-  },
-  {
-    path: 'sign-up',
     component: AuthFormComponent,
     data: {
       login: false,

@@ -1,7 +1,7 @@
 import { AuthService } from './../../services/auth.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 @Component({
@@ -20,7 +20,8 @@ export class AuthFormComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   get buttonLabel(): string {
@@ -64,7 +65,9 @@ export class AuthFormComponent implements OnInit, OnDestroy {
     const sub = this.authService
       .createUser$(this.formGroup.value)
       .subscribe(
-        () => {},
+        () => {
+          this.router.navigate(['/chat']);
+        },
         (errRes) => {
           this.error$.next(errRes?.error?.message ?? 'Registration failed');
         }
