@@ -16,6 +16,14 @@ import { environment } from 'src/environments/environment';
 import { Store } from '@ngrx/store';
 import { UserStateActions } from 'src/app/store/userState/userState.actions';
 
+const parseJwt = (token) => {
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch (e) {
+    return null;
+  }
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -59,7 +67,16 @@ export class AuthService {
     return this.store.select(UserStateSelectors.auth);
   }
 
-  getAuthorizationToken(): string {
+  getAuthorizationToken(): string | null {
+    const exp = parseInt(
+      this.localStorageService.getItem(LOCAL_STORAGE_ITEMS.EXP),
+      10
+    );
+
+    if (new Date().getTime() > exp * 1000) {
+      return null;
+    }
+
     return this.localStorageService.getItem(LOCAL_STORAGE_ITEMS.ID_TOKEN);
   }
 
@@ -72,11 +89,21 @@ export class AuthService {
   }
 
   clearTokens(): void {
+    this.localStorageService.removeItem(LOCAL_STORAGE_ITEMS.EXP);
     this.localStorageService.removeItem(LOCAL_STORAGE_ITEMS.ID_TOKEN);
     this.localStorageService.removeItem(LOCAL_STORAGE_ITEMS.REFRESH_TOKEN);
   }
 
   private setTokensToLocalStorage(tokens: IApiSuccessLogin): void {
+    const encodedToken = parseJwt(tokens.idToken);
+    if (!encodedToken) {
+      return;
+    }
+
+    this.localStorageService.setItem(
+      LOCAL_STORAGE_ITEMS.EXP,
+      encodedToken?.exp
+    );
     this.localStorageService.setItem(
       LOCAL_STORAGE_ITEMS.ID_TOKEN,
       tokens.idToken

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 export const LOCAL_STORAGE_ITEMS = {
   ID_TOKEN: 'ID_TOKEN',
   REFRESH_TOKEN: 'REFRESH_TOKEN',
+  EXP: 'EXP',
 };
 
 @Injectable({
