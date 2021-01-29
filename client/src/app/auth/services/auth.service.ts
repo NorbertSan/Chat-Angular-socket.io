@@ -63,6 +63,10 @@ export class AuthService {
     );
   }
 
+  refreshToken$(refreshToken: string): Observable<IApiSuccessLogin> {
+    return this.http.post(`${this.baseUrl}/refreshToken`, refreshToken);
+  }
+
   isAuthenticated(): Observable<boolean> {
     return this.store.select(UserStateSelectors.auth);
   }

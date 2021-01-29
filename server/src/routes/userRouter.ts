@@ -1,4 +1,4 @@
-import { authMiddleware } from './../middlewares/auth.middleware';
+import { authMiddleware, DecodedIdToken } from './../middlewares/auth.middleware';
 import { checkMandatoryFields } from './../utilities/validators';
 import express from 'express';
 import firebase from 'firebase';
@@ -46,6 +46,12 @@ interface SuccessLoginRes {
   refreshToken: string;
 }
 
+interface IUserDetails {
+  id: string;
+  email: string;
+  displayName: string;
+}
+
 // SIGN UP
 router.route('/create').post(
   async (req, res): Promise<SuccessLoginRes> => {
@@ -90,6 +96,7 @@ router.route('/create').post(
   },
 );
 
+// LOGIN
 router.route('/login').post(
   async (req, res): Promise<SuccessLoginRes> => {
     const body: IApiReqUserLogin = req.body;
@@ -116,12 +123,19 @@ router.route('/login').post(
   },
 );
 
+// LOGOUT
 router.route('/logout').post(authMiddleware, async (req, res) => {
   return res.status(200).json({ code: USER_ROUTES_ERROR_CODES.LOGOUT_SUCCESS });
 });
 
+// REFRESH TOKEN
 router.route('/refreshToken').post(
   async (req, res): Promise<SuccessLoginRes> => {
+    const errorMsg: string | null = checkMandatoryFields(['refreshToken'], req.body);
+    if (errorMsg) {
+      return res.status(400).json({ message: errorMsg });
+    }
+
     const refreshToken: string = req.body.refreshToken;
     const refreshTokenURL = `https://securetoken.googleapis.com/v1/token?key=${process.env.FIREBASE_API_KEY}`;
     try {
@@ -141,5 +155,16 @@ router.route('/refreshToken').post(
     }
   },
 );
+
+// GET SINGLE USER
+router.route('/loggedUser').get(authMiddleware, async (req, res) => {
+  const userId: string = res.locals.decodedIdToken.uid;
+  try {
+    const user = (await db.collection('users').doc(userId).get()).data() as IUserDetails;
+    return res.status(200).json(user);
+  } catch (err) {
+    return res.status(500);
+  }
+});
 
 export default router;

@@ -2,7 +2,7 @@ import { USER_ROUTES_ERROR_CODES } from './../routes/userRouter';
 import { admin } from '../firebase/config';
 import firebase from 'firebase';
 
-interface DecodedIdToken {
+export interface DecodedIdToken {
   aud: string;
   auth_time: number;
   email?: string;
@@ -37,6 +37,7 @@ export const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ code: USER_ROUTES_ERROR_CODES.TOKEN_EXPIRED });
     }
 
+    res.locals.decodedIdToken = decodedIdToken;
     next();
   } catch {
     return res.json(401).json({ code: USER_ROUTES_ERROR_CODES.INVALID_TOKEN });
