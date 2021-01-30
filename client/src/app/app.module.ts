@@ -9,8 +9,8 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
-import { UserStateReducer } from './store/userState/userState.reducer';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { AppStateReducer } from './store/appState/appState.reducer';
 @NgModule({
   declarations: [AppComponent, NavbarComponent],
   imports: [
@@ -19,7 +19,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     SharedModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    StoreModule.forRoot({ UserState: UserStateReducer }, {}),
+    StoreModule.forRoot({ AppState: AppStateReducer }, {}),
     StoreDevtoolsModule.instrument(),
   ],
   bootstrap: [AppComponent],

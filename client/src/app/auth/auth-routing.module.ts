@@ -1,3 +1,4 @@
+import { AuthWrapperComponent } from './components/auth-wrapper/auth-wrapper.component';
 import { AuthFormComponent } from './components/auth-form/auth-form.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
@@ -5,17 +6,26 @@ import { Routes, RouterModule } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    component: AuthFormComponent,
+    component: AuthWrapperComponent,
     data: {
       login: false,
     },
-  },
-  {
-    path: 'login',
-    component: AuthFormComponent,
-    data: {
-      login: true,
-    },
+    children: [
+      {
+        path: '',
+        component: AuthFormComponent,
+        data: {
+          login: false,
+        },
+      },
+      {
+        path: 'login',
+        component: AuthFormComponent,
+        data: {
+          login: true,
+        },
+      },
+    ],
   },
 ];
 

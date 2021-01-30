@@ -39,7 +39,7 @@ export const authMiddleware = async (req, res, next) => {
 
     res.locals.decodedIdToken = decodedIdToken;
     next();
-  } catch {
+  } catch (err) {
     return res.json(401).json({ code: USER_ROUTES_ERROR_CODES.INVALID_TOKEN });
   }
 };

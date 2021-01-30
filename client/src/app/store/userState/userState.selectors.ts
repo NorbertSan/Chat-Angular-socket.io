@@ -1,14 +1,10 @@
 import { UserState } from './userState.reducer';
-import { AppState } from './../index';
+import { StoreState } from './../index';
 import { createSelector } from '@ngrx/store';
 
-export const SelectUserState = (state: AppState) => state.UserState;
+export const SelectUserState = (state: StoreState) => state.UserState;
 
 export const UserStateSelectors = {
-  auth: createSelector(
-    SelectUserState,
-    (userState: UserState) => userState.auth
-  ),
   email: createSelector(
     SelectUserState,
     (userState: UserState) => userState.email

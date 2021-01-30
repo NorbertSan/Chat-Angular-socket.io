@@ -1,8 +1,9 @@
+import { tap } from 'rxjs/operators';
+import { AppStateSelectors } from './../store/appState/appState.selectors';
 import { AuthService } from './../auth/services/auth.service';
 import { Observable, Subscription } from 'rxjs';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { UserStateSelectors } from '../store/userState/userState.selectors';
 import { Router } from '@angular/router';
 
 @Component({
@@ -19,7 +20,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.auth$ = this.store.select(UserStateSelectors.auth);
+    this.auth$ = this.store.select(AppStateSelectors.auth);
   }
 
   ngOnDestroy(): void {
@@ -27,8 +28,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   logout(): void {
-    const sub = this.authService.logout$().subscribe();
+    const sub = this.authService
+      .logout$()
+      .pipe(
+        tap(() => {
+          this.router.navigate(['/auth/login']);
+        })
+      )
+      .subscribe();
+
     this.subs.add(sub);
-    this.router.navigate(['/auth/login']);
   }
 }

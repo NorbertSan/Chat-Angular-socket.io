@@ -1,9 +1,10 @@
-import { tap } from 'rxjs/operators';
+import { AppStateActions } from './../../store/appState/appState.actions';
+import { AppStateSelectors } from './../../store/appState/appState.selectors';
+import { tap, catchError } from 'rxjs/operators';
 import {
   LocalStorageService,
   LOCAL_STORAGE_ITEMS,
 } from './../../shared/services/local-storage.service';
-import { UserStateSelectors } from './../../store/userState/userState.selectors';
 import { RestService } from './../../shared/services/rest.service';
 import {
   IApiSuccessLogin,
@@ -11,7 +12,7 @@ import {
   IUserCredentials,
 } from './../auth-models';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Store } from '@ngrx/store';
 import { UserStateActions } from 'src/app/store/userState/userState.actions';
@@ -57,18 +58,26 @@ export class AuthService {
   logout$(): Observable<Response> {
     return this.http.post(`${this.baseUrl}/logout`, null).pipe(
       tap(() => {
-        this.clearTokens();
-        this.store.dispatch(UserStateActions.logout());
+        this.triggerLogoutActions();
       })
     );
   }
 
   refreshToken$(refreshToken: string): Observable<IApiSuccessLogin> {
-    return this.http.post(`${this.baseUrl}/refreshToken`, refreshToken);
+    return this.http.post(`${this.baseUrl}/refreshToken`, refreshToken).pipe(
+      tap((tokens) => {
+        this.setTokensToLocalStorage(tokens);
+        this.setAuth(true);
+      }),
+      catchError((err) => {
+        this.triggerLogoutActions();
+        return throwError(err);
+      })
+    );
   }
 
   isAuthenticated(): Observable<boolean> {
-    return this.store.select(UserStateSelectors.auth);
+    return this.store.select(AppStateSelectors.auth);
   }
 
   getAuthorizationToken(): string | null {
@@ -89,13 +98,19 @@ export class AuthService {
   }
 
   setAuth(auth: boolean): void {
-    this.store.dispatch(UserStateActions.setAuth({ auth }));
+    this.store.dispatch(AppStateActions.setAuth({ auth }));
   }
 
   clearTokens(): void {
     this.localStorageService.removeItem(LOCAL_STORAGE_ITEMS.EXP);
     this.localStorageService.removeItem(LOCAL_STORAGE_ITEMS.ID_TOKEN);
     this.localStorageService.removeItem(LOCAL_STORAGE_ITEMS.REFRESH_TOKEN);
+  }
+
+  private triggerLogoutActions(): void {
+    this.clearTokens();
+    this.store.dispatch(AppStateActions.logout());
+    this.store.dispatch(UserStateActions.logout());
   }
 
   private setTokensToLocalStorage(tokens: IApiSuccessLogin): void {

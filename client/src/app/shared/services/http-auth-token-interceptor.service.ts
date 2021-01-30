@@ -1,3 +1,7 @@
+import {
+  LocalStorageService,
+  LOCAL_STORAGE_ITEMS,
+} from './local-storage.service';
 import { AuthService } from '../../auth/services/auth.service';
 import { Observable, throwError } from 'rxjs';
 import {
@@ -15,7 +19,11 @@ import { Router } from '@angular/router';
   providedIn: 'root',
 })
 export class HttpAuthTokenInterceptorService implements HttpInterceptor {
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private localStorageService: LocalStorageService
+  ) {}
 
   intercept(
     req: HttpRequest<any>,
@@ -40,8 +48,15 @@ export class HttpAuthTokenInterceptorService implements HttpInterceptor {
 
   private handleAuthError(error: HttpErrorResponse): Observable<any> {
     if (error.error instanceof ErrorEvent && error.status === 401) {
+      const refreshToken: string = this.localStorageService.getItem(
+        LOCAL_STORAGE_ITEMS.REFRESH_TOKEN
+      );
       this.authService.clearTokens();
-      this.router.navigate(['/auth', 'login']);
+      if (refreshToken) {
+        this.authService.refreshToken$(refreshToken).subscribe().unsubscribe();
+      } else {
+        this.router.navigate(['/auth', 'login']);
+      }
       return;
     }
 
